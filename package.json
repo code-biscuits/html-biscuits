@@ -16,12 +16,7 @@
   "contributes": {
     "commands": [],
     "configuration": {
-      "properties": {
-        "html-biscuits.enableCodeLens": {
-          "type": "boolean",
-          "default": true
-        }
-      }
+      "properties": {}
     }
   },
   "scripts": {

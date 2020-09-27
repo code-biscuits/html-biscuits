@@ -1,5 +1,6 @@
 {
   "name": "html-biscuits",
+  "publisher": "code-biscuits",
   "displayName": "HTML Biscuits",
   "description": "Add annotations, hereso unto for known as \"Biscuits\", to the end of the line of closing html tags. Such Biscuits could include ids and /or class names. Make div soup digestible!",
   "version": "0.0.1",

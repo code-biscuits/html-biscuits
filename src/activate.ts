@@ -135,10 +135,13 @@ function stringifyAttributes(attributes: any) {
   if (attributes.id) {
     stringifiedAttributes += `#${attributes.id}`.replace('"', "");
   }
-  if (attributes.class) {
+
+  let class_attr = ( attributes.class ? attributes.class : ( attributes.className ? attributes.className : false ) );
+
+  if (class_attr) {
     stringifiedAttributes +=
       " " +
-      attributes.class
+      class_attr
         .split(" ")
         .map((className: string) => {
           return `.${className}`.replace('"', "");
@@ -146,17 +149,7 @@ function stringifyAttributes(attributes: any) {
         .join(" ")
         .replace('"', "");
   }
-  if (attributes.className) {
-    stringifiedAttributes +=
-      " " +
-      attributes.className
-        .split(" ")
-        .map((className: string) => {
-          return `.${className}`.replace('"', "");
-        })
-        .join(" ")
-        .replace('"', "");
-  }
+  
   stringifiedAttributes = stringifiedAttributes.replace('"', "");
   if (stringifiedAttributes !== prefix) {
     return stringifiedAttributes;

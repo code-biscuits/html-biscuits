@@ -136,30 +136,35 @@ function stringifyAttributes(attributes: any) {
     stringifiedAttributes += `#${attributes.id}`.replace('"', "");
   }
   if (attributes.class) {
-    stringifiedAttributes +=
-      " " +
+    stringifiedAttributes = addDecoratedClassNamesWithDot(
+      stringifiedAttributes,
       attributes.class
-        .split(" ")
-        .map((className: string) => {
-          return `.${className}`.replace('"', "");
-        })
-        .join(" ")
-        .replace('"', "");
+    );
   }
   if (attributes.className) {
-    stringifiedAttributes +=
-      " " +
+    stringifiedAttributes = addDecoratedClassNamesWithDot(
+      stringifiedAttributes,
       attributes.className
-        .split(" ")
-        .map((className: string) => {
-          return `.${className}`.replace('"', "");
-        })
-        .join(" ")
-        .replace('"', "");
+    );
   }
   stringifiedAttributes = stringifiedAttributes.replace('"', "");
   if (stringifiedAttributes !== prefix) {
     return stringifiedAttributes;
   }
   return "";
+}
+
+function addDecoratedClassNamesWithDot(
+  originalString: string,
+  classNames: string
+) {
+  return (originalString +=
+    " " +
+    classNames
+      .split(" ")
+      .map((className: string) => {
+        return `.${className}`.replace('"', "");
+      })
+      .join(" ")
+      .replace('"', ""));
 }

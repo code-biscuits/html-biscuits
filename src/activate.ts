@@ -1,4 +1,3 @@
-import { mainModule } from "process";
 import * as vscode from "vscode";
 import {
   getLanguageService,

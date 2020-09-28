@@ -7,6 +7,7 @@ import {
   languages,
   ExtensionContext,
 } from "vscode";
+import * as vscodeHtml from "vscode-html-languageservice";
 export { activate } from "./activate";
 
 // this method is called when your extension is deactivated

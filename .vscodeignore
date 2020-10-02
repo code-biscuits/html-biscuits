@@ -7,3 +7,6 @@ src/**
 vsc-extension-quickstart.md
 **/tsconfig.json
 **/.eslintrc.json
+node_modules
+out
+*.afdesign

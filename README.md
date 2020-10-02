@@ -11,6 +11,10 @@ In the current implementation, code-biscuits prevent seeing GitLens annotations.
 
 ## Release Notes
 
+### 0.0.7
+
+Bundle assets with rollup for smaller download
+
 ### 0.0.6
 
 README and Marketplace updates

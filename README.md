@@ -1,6 +1,13 @@
 # html-biscuits README
 
-Use html-biscuits to make div soup and html spaghetti more digetible. Annotate ALL the end tags (that have relevant attributes)!!!
+Use html-biscuits to make div soup and html spaghetti more digestible. Annotate ALL the end tags (that have relevant attributes)!!!
+
+![](./example.gif)
+
+## Warning! Potential Plugin Conflict
+
+In the current implementation, code-biscuits prevent seeing GitLens annotations. Issue can be tracked here:
+[https://github.com/code-biscuits/html-biscuits/issues/2](https://github.com/code-biscuits/html-biscuits/issues/2)
 
 ## Release Notes
 

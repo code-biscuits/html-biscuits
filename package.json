@@ -6,7 +6,7 @@
   "repository": "https://github.com/code-biscuits/html-biscuits",
   "description": "Add annotations, hereso unto for known as \"Biscuits\", to the end of the line of closing html tags. Such Biscuits could include ids and/or class names. Make div soup digestible!",
   "icon": "biscuits-styled.png",
-  "version": "0.0.11",
+  "version": "0.0.12",
   "license": "MIT",
   "engines": {
     "vscode": "^1.49.0"
@@ -39,6 +39,11 @@
           "type": "string",
           "default": "",
           "description": "What color should the annotations be? Defaults to the lineNumber color."
+        },
+        "html-biscuits.annotationMinDistance": {
+          "type": "number",
+          "default": 0,
+          "description": "What is the minimum line distance between start and end tags. Example: A value of 0 will annotate end tags on the same line as a start tag."
         }
       }
     }
@@ -48,7 +53,7 @@
     "compile": "yarn run webpack && yarn run bundle",
     "bundle": "webpack --mode production",
     "lint": "eslint src --ext ts",
-    "watch": "yarn run webpack-dev",
+    "watch": "yarn run webpack",
     "webpack": "webpack --mode development",
     "webpack-dev": "webpack --mode development --watch",
     "pretest": "yarn run compile && yarn run lint",

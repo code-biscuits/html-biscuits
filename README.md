@@ -9,7 +9,24 @@ Use html-biscuits to make div soup and html spaghetti more digestible. Annotate 
 In the current implementation, code-biscuits prevent seeing GitLens annotations. Issue can be tracked here:
 [https://github.com/code-biscuits/html-biscuits/issues/2](https://github.com/code-biscuits/html-biscuits/issues/2)
 
+## Configuration
+
+- `html-biscuits.annotationColor` _string_ : Determines the color of annotation. Accepts any valid CSS color string.
+
+  - default: vscode.ThemeColor("editorLineNumber.foreground"),
+
+- `html-biscuits.annotationPrefix` _string_ : Determines beginning of the annotation text. Empty string is acceptable.
+
+  - default: `"// "`,
+
+- `html-biscuits.annotationMinDistance` _number_ : Determines the minimum amount of lines between start and end tag used to decide to show the annotations.
+  - default: `0`,
+
 ## Release Notes
+
+### 0.0.12
+
+Add configuration for minimum line distance
 
 ### 0.0.11
 

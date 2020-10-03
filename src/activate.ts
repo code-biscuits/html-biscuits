@@ -7,29 +7,35 @@ import {
 
 const CONFIG_PREFIX_KEY = "html-biscuits.annotationPrefix";
 const CONFIG_COLOR_KEY = "html-biscuits.annotationColor";
+const CONFIG_DISTANCE_KEY = "html-biscuits.annotationMinDistance";
 
 const htmlService = getLanguageService();
+
+let updateInterval: NodeJS.Timeout | null;
 
 export function activate(context: vscode.ExtensionContext) {
   let decorations: vscode.DecorationOptions[] = [];
   let activeEditor = vscode.window.activeTextEditor;
 
-  // htmlDocument.
+  const decorationType = vscode.window.createTextEditorDecorationType({
+    after: {
+      color:
+        vscode.workspace.getConfiguration().get(CONFIG_COLOR_KEY) ||
+        new vscode.ThemeColor("editorLineNumber.foreground"),
+      margin: "2px",
+    },
+    rangeBehavior: vscode.DecorationRangeBehavior.ClosedOpen,
+  });
+
   function updateDecorations() {
     decorations = [];
+
     activeEditor = vscode.window.activeTextEditor;
     const document = activeEditor?.document;
-    const decorationType = vscode.window.createTextEditorDecorationType({
-      after: {
-        color:
-          vscode.workspace.getConfiguration().get(CONFIG_COLOR_KEY) ||
-          new vscode.ThemeColor("editorLineNumber.foreground"),
-        margin: "2px",
-      },
-      rangeBehavior: vscode.DecorationRangeBehavior.ClosedOpen,
-    });
     const prefix: string =
       vscode.workspace.getConfiguration().get(CONFIG_PREFIX_KEY) || "// ";
+    const minDistance: number =
+      vscode.workspace.getConfiguration().get(CONFIG_DISTANCE_KEY) || 0;
     if (document) {
       const baseHtmlDocument = {
         ...document,
@@ -47,6 +53,9 @@ export function activate(context: vscode.ExtensionContext) {
 
           if (node.attributes && node.tag) {
             if (node.endTagStart) {
+              const startLine = document.lineAt(
+                document.positionAt(node.startTagEnd || node.endTagStart)
+              );
               const line = document.lineAt(
                 document.positionAt(node.endTagStart)
               );
@@ -64,7 +73,12 @@ export function activate(context: vscode.ExtensionContext) {
                 node.endTagStart
               )?.attributes;
 
-              if (range && nodeAttributes && activeEditor) {
+              if (
+                range &&
+                nodeAttributes &&
+                activeEditor &&
+                line.lineNumber - startLine.lineNumber >= minDistance
+              ) {
                 const { line, character } = range.start;
 
                 const endOfLine = activeEditor.document.lineAt(line).range.end;
@@ -95,10 +109,10 @@ export function activate(context: vscode.ExtensionContext) {
         nodes = children;
         children = [];
       }
+    }
 
-      if (activeEditor) {
-        activeEditor?.setDecorations(decorationType, decorations);
-      }
+    if (activeEditor) {
+      activeEditor?.setDecorations(decorationType, decorations);
     }
   }
 
@@ -126,15 +140,6 @@ export function activate(context: vscode.ExtensionContext) {
     null,
     context.subscriptions
   );
-
-  // context.subscriptions.push(
-  vscode.workspace.onDidChangeConfiguration((e) => {
-    console.log("config changed", e);
-    if (e.affectsConfiguration(CONFIG_PREFIX_KEY)) {
-      console.log("affected: ", e);
-    }
-  });
-  // );
 }
 
 function stringifyAttributes(attributes: any, prefix: string) {

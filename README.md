@@ -11,6 +11,10 @@ In the current implementation, code-biscuits prevent seeing GitLens annotations.
 
 ## Release Notes
 
+### 0.0.11
+
+Add configuration for Biscuit color
+
 ### 0.0.10
 
 Add configuration for prefix

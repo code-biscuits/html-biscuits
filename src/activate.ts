@@ -5,16 +5,10 @@ import {
   TextDocument as HtmlTextDocument,
 } from "vscode-html-languageservice";
 
-const CONFIG_KEY = "html-biscuits.annotationPrefix";
+const CONFIG_PREFIX_KEY = "html-biscuits.annotationPrefix";
+const CONFIG_COLOR_KEY = "html-biscuits.annotationColor";
 
 const htmlService = getLanguageService();
-const decorationType = vscode.window.createTextEditorDecorationType({
-  after: {
-    color: new vscode.ThemeColor("editorLineNumber.foreground"), // new vscode.ThemeColor("dart.closingLabels"),
-    margin: "2px",
-  },
-  rangeBehavior: vscode.DecorationRangeBehavior.ClosedOpen,
-});
 
 export function activate(context: vscode.ExtensionContext) {
   let decorations: vscode.DecorationOptions[] = [];
@@ -25,10 +19,17 @@ export function activate(context: vscode.ExtensionContext) {
     decorations = [];
     activeEditor = vscode.window.activeTextEditor;
     const document = activeEditor?.document;
-    console.log("firing update baz");
+    const decorationType = vscode.window.createTextEditorDecorationType({
+      after: {
+        color:
+          vscode.workspace.getConfiguration().get(CONFIG_COLOR_KEY) ||
+          new vscode.ThemeColor("editorLineNumber.foreground"),
+        margin: "2px",
+      },
+      rangeBehavior: vscode.DecorationRangeBehavior.ClosedOpen,
+    });
     const prefix: string =
-      vscode.workspace.getConfiguration().get(CONFIG_KEY) || "// ";
-    console.log("config", prefix);
+      vscode.workspace.getConfiguration().get(CONFIG_PREFIX_KEY) || "// ";
     if (document) {
       const baseHtmlDocument = {
         ...document,
@@ -39,17 +40,13 @@ export function activate(context: vscode.ExtensionContext) {
       let nodes: Node[] = parsedDocument.roots;
       let children: Node[] = [];
       while (nodes.length !== 0) {
-        console.log("nodes", nodes);
         nodes.forEach((node) => {
           if (node.children.length) {
-            console.log("adding children", node.children);
             children = [...children, ...node.children];
           }
 
           if (node.attributes && node.tag) {
-            console.log("has attributes and tag");
             if (node.endTagStart) {
-              console.log("has endTagStart");
               const line = document.lineAt(
                 document.positionAt(node.endTagStart)
               );
@@ -66,9 +63,6 @@ export function activate(context: vscode.ExtensionContext) {
               const nodeAttributes = parsedDocument?.findNodeAt(
                 node.endTagStart
               )?.attributes;
-
-              console.log("range", range);
-              console.log("nodeAttributes", nodeAttributes);
 
               if (range && nodeAttributes && activeEditor) {
                 const { line, character } = range.start;
@@ -136,7 +130,7 @@ export function activate(context: vscode.ExtensionContext) {
   // context.subscriptions.push(
   vscode.workspace.onDidChangeConfiguration((e) => {
     console.log("config changed", e);
-    if (e.affectsConfiguration(CONFIG_KEY)) {
+    if (e.affectsConfiguration(CONFIG_PREFIX_KEY)) {
       console.log("affected: ", e);
     }
   });

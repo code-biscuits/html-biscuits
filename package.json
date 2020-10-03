@@ -4,9 +4,9 @@
   "publisher": "CodeBiscuits",
   "displayName": "HTML Biscuits",
   "repository": "https://github.com/code-biscuits/html-biscuits",
-  "description": "Add annotations, hereso unto for known as \"Biscuits\", to the end of the line of closing html tags. Such Biscuits could include ids and /or class names. Make div soup digestible!",
+  "description": "Add annotations, hereso unto for known as \"Biscuits\", to the end of the line of closing html tags. Such Biscuits could include ids and/or class names. Make div soup digestible!",
   "icon": "biscuits-styled.png",
-  "version": "0.0.9",
+  "version": "0.0.10",
   "license": "MIT",
   "engines": {
     "vscode": "^1.49.0"
@@ -28,15 +28,24 @@
   "contributes": {
     "commands": [],
     "configuration": {
-      "properties": {}
+      "title": "HTML Biscuits",
+      "properties": {
+        "html-biscuits.annotationPrefix": {
+          "type": "string",
+          "default": "// ",
+          "description": "The prefix for the annotations. Empty string is acceptable."
+        }
+      }
     }
   },
   "scripts": {
-    "vscode:prepublish": "yarn run compile && yarn run bundle",
-    "compile": "tsc -b ./",
+    "vscode:prepublish": "yarn run compile",
+    "compile": "yarn run webpack && yarn run bundle",
     "bundle": "webpack --mode production",
     "lint": "eslint src --ext ts",
-    "watch": "tsc -watch -p ./",
+    "watch": "yarn run webpack-dev",
+    "webpack": "webpack --mode development",
+    "webpack-dev": "webpack --mode development --watch",
     "pretest": "yarn run compile && yarn run lint",
     "test": "node ./out/test/runTest.js"
   },

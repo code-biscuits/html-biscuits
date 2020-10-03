@@ -11,6 +11,10 @@ In the current implementation, code-biscuits prevent seeing GitLens annotations.
 
 ## Release Notes
 
+### 0.0.10
+
+Add configuration for prefix
+
 ### 0.0.9
 
 Switch to webpack instead of rollup
@@ -18,14 +22,6 @@ Switch to webpack instead of rollup
 ### 0.0.8
 
 Try to fix deploy bugs from bundling refactor
-
-### 0.0.7
-
-Bundle assets with rollup for smaller download
-
-### 0.0.6
-
-README and Marketplace updates
 
 ## Attributions
 

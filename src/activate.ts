@@ -5,6 +5,8 @@ import {
   TextDocument as HtmlTextDocument,
 } from "vscode-html-languageservice";
 
+const CONFIG_KEY = "html-biscuits.annotationPrefix";
+
 const htmlService = getLanguageService();
 const decorationType = vscode.window.createTextEditorDecorationType({
   after: {
@@ -23,7 +25,10 @@ export function activate(context: vscode.ExtensionContext) {
     decorations = [];
     activeEditor = vscode.window.activeTextEditor;
     const document = activeEditor?.document;
-    console.log("firing update");
+    console.log("firing update baz");
+    const prefix: string =
+      vscode.workspace.getConfiguration().get(CONFIG_KEY) || "// ";
+    console.log("config", prefix);
     if (document) {
       const baseHtmlDocument = {
         ...document,
@@ -71,7 +76,8 @@ export function activate(context: vscode.ExtensionContext) {
                 const endOfLine = activeEditor.document.lineAt(line).range.end;
 
                 const stringifiedAttributes = stringifyAttributes(
-                  nodeAttributes
+                  nodeAttributes,
+                  prefix
                 );
 
                 if (stringifiedAttributes) {
@@ -126,10 +132,18 @@ export function activate(context: vscode.ExtensionContext) {
     null,
     context.subscriptions
   );
+
+  // context.subscriptions.push(
+  vscode.workspace.onDidChangeConfiguration((e) => {
+    console.log("config changed", e);
+    if (e.affectsConfiguration(CONFIG_KEY)) {
+      console.log("affected: ", e);
+    }
+  });
+  // );
 }
 
-function stringifyAttributes(attributes: any) {
-  const prefix = " // ";
+function stringifyAttributes(attributes: any, prefix: string) {
   let stringifiedAttributes = prefix;
   if (attributes.id) {
     stringifiedAttributes += `#${attributes.id}`.replace('"', "");

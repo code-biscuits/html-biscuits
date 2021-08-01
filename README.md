@@ -20,7 +20,15 @@ In the current implementation, code-biscuits prevent seeing GitLens annotations.
   - default: `"// "`,
 
 - `html-biscuits.annotationMinDistance` _number_ : Determines the minimum amount of lines between start and end tag used to decide to show the annotations.
+
   - default: `0`,
+
+- `html-biscuits.annotationMaxLength` _number_ : Determines the maximum amount of characters or words to show before truncating the biscuit text.
+
+  - default: `0`,
+
+- `html-biscuits.annotationTrimByWords` _boolean_ : Determines whether to trim max length by characters or words..
+  - default: `false`,
 
 ## Release Notes
 

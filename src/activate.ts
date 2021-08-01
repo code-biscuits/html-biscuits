@@ -5,6 +5,8 @@ import {
   TextDocument as HtmlTextDocument,
 } from "vscode-html-languageservice";
 
+let shouldHideBiscuits = false;
+
 const CONFIG_PREFIX_KEY = "html-biscuits.annotationPrefix";
 const CONFIG_COLOR_KEY = "html-biscuits.annotationColor";
 const CONFIG_DISTANCE_KEY = "html-biscuits.annotationMinDistance";
@@ -13,7 +15,16 @@ const CONFIG_MAX_LENGTH_KEY = "html-biscuits.annotationMaxLength";
 
 const htmlService = getLanguageService();
 
+const toggleCommand = "html-biscuits.toggleBiscuitsShowing";
+
 export function activate(context: vscode.ExtensionContext) {
+  context.subscriptions.push(
+    vscode.commands.registerCommand(toggleCommand, () => {
+      shouldHideBiscuits = !shouldHideBiscuits;
+      updateDecorations();
+    })
+  );
+
   let decorations: vscode.DecorationOptions[] = [];
   let activeEditor = vscode.window.activeTextEditor;
 
@@ -98,7 +109,11 @@ export function activate(context: vscode.ExtensionContext) {
                   trimByWords
                 );
 
-                if (stringifiedAttributes && maxLength > 0) {
+                if (
+                  stringifiedAttributes &&
+                  maxLength > 0 &&
+                  !shouldHideBiscuits
+                ) {
                   decorations.push({
                     range: new vscode.Range(
                       activeEditor.document.positionAt(indexOf),

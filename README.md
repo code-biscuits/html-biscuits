@@ -1,4 +1,4 @@
-# html-biscuits README
+# HTML Biscuits
 
 Use html-biscuits to make div soup and html spaghetti more digestible. Annotate ALL the end tags (that have relevant attributes)!!!
 
@@ -29,6 +29,14 @@ In the current implementation, code-biscuits prevent seeing GitLens annotations.
 
 - `html-biscuits.annotationTrimByWords` _boolean_ : Determines whether to trim max length by characters or words..
   - default: `false`,
+
+## Commands
+
+As we add more commands to change functionality on the fly, we will document them here.
+
+### Toggle Biscuits
+
+You are now able to toggle the biscuits on and off using the VSCode Command `HTML Biscuits: Toggle Biscuits Showing`.
 
 ## Release Notes
 

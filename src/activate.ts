@@ -8,10 +8,10 @@ import {
 const CONFIG_PREFIX_KEY = "html-biscuits.annotationPrefix";
 const CONFIG_COLOR_KEY = "html-biscuits.annotationColor";
 const CONFIG_DISTANCE_KEY = "html-biscuits.annotationMinDistance";
+const CONFIG_TRIM_BY_WORDS_KEY = "html-biscuits.annotationTrimByWords";
+const CONFIG_MAX_LENGTH_KEY = "html-biscuits.annotationMaxLength";
 
 const htmlService = getLanguageService();
-
-let updateInterval: NodeJS.Timeout | null;
 
 export function activate(context: vscode.ExtensionContext) {
   let decorations: vscode.DecorationOptions[] = [];
@@ -36,6 +36,14 @@ export function activate(context: vscode.ExtensionContext) {
       vscode.workspace.getConfiguration().get(CONFIG_PREFIX_KEY) || "// ";
     const minDistance: number =
       vscode.workspace.getConfiguration().get(CONFIG_DISTANCE_KEY) || 0;
+    const trimByWords: boolean =
+      vscode.workspace.getConfiguration().get(CONFIG_TRIM_BY_WORDS_KEY) ||
+      false;
+    const maxLength: number =
+      vscode.workspace.getConfiguration().get(CONFIG_MAX_LENGTH_KEY) || 42;
+
+    console.log({ trimByWords }, typeof trimByWords);
+
     if (document) {
       const baseHtmlDocument = {
         ...document,
@@ -85,10 +93,12 @@ export function activate(context: vscode.ExtensionContext) {
 
                 const stringifiedAttributes = stringifyAttributes(
                   nodeAttributes,
-                  prefix
+                  prefix,
+                  maxLength,
+                  trimByWords
                 );
 
-                if (stringifiedAttributes) {
+                if (stringifiedAttributes && maxLength > 0) {
                   decorations.push({
                     range: new vscode.Range(
                       activeEditor.document.positionAt(indexOf),
@@ -142,8 +152,13 @@ export function activate(context: vscode.ExtensionContext) {
   );
 }
 
-function stringifyAttributes(attributes: any, prefix: string) {
-  let stringifiedAttributes = prefix;
+function stringifyAttributes(
+  attributes: any,
+  prefix: string,
+  maxLength: number,
+  trimByWords = false
+) {
+  let stringifiedAttributes = "";
   if (attributes.id) {
     stringifiedAttributes += `#${attributes.id}`.replace('"', "");
   }
@@ -160,6 +175,20 @@ function stringifyAttributes(attributes: any, prefix: string) {
     );
   }
   stringifiedAttributes = stringifiedAttributes.replace('"', "");
+
+  if (trimByWords) {
+    const words = stringifiedAttributes.split(" ");
+    if (words.length > maxLength) {
+      const slicedWords = words
+        .filter((word) => word !== "" && word !== " ")
+        .slice(0, maxLength);
+      stringifiedAttributes = slicedWords.join(" ") + "...";
+    }
+  } else if (!trimByWords && stringifiedAttributes.length > maxLength) {
+    stringifiedAttributes = stringifiedAttributes.slice(0, maxLength) + "...";
+  }
+
+  stringifiedAttributes = prefix + stringifiedAttributes;
   if (stringifiedAttributes !== prefix) {
     return stringifiedAttributes;
   }

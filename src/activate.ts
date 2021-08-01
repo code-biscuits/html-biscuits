@@ -5,17 +5,19 @@ import {
   TextDocument as HtmlTextDocument,
 } from "vscode-html-languageservice";
 
-let shouldHideBiscuits = false;
-
 const CONFIG_PREFIX_KEY = "html-biscuits.annotationPrefix";
 const CONFIG_COLOR_KEY = "html-biscuits.annotationColor";
 const CONFIG_DISTANCE_KEY = "html-biscuits.annotationMinDistance";
 const CONFIG_TRIM_BY_WORDS_KEY = "html-biscuits.annotationTrimByWords";
 const CONFIG_MAX_LENGTH_KEY = "html-biscuits.annotationMaxLength";
+const CONFIG_CURSOR_LINE_ONLY_KEY = "html-biscuits.annotationCursorLineOnly";
 
 const htmlService = getLanguageService();
 
 const toggleCommand = "html-biscuits.toggleBiscuitsShowing";
+
+let shouldHideBiscuits = false;
+let cursorLines: number[] = [];
 
 export function activate(context: vscode.ExtensionContext) {
   context.subscriptions.push(
@@ -27,6 +29,7 @@ export function activate(context: vscode.ExtensionContext) {
 
   let decorations: vscode.DecorationOptions[] = [];
   let activeEditor = vscode.window.activeTextEditor;
+  cursorLines = [activeEditor?.selection?.active?.line ?? -1];
 
   const decorationType = vscode.window.createTextEditorDecorationType({
     after: {
@@ -38,7 +41,15 @@ export function activate(context: vscode.ExtensionContext) {
     rangeBehavior: vscode.DecorationRangeBehavior.ClosedOpen,
   });
 
-  function updateDecorations() {
+  vscode.window.onDidChangeTextEditorSelection((cursorLocationEvent) => {
+    cursorLines = cursorLocationEvent.selections.map(
+      (cursorLocation) => cursorLocation.end?.line ?? 0
+    );
+
+    updateDecorations(true);
+  });
+
+  function updateDecorations(isSelectionChange = false) {
     decorations = [];
 
     activeEditor = vscode.window.activeTextEditor;
@@ -52,8 +63,14 @@ export function activate(context: vscode.ExtensionContext) {
       false;
     const maxLength: number =
       vscode.workspace.getConfiguration().get(CONFIG_MAX_LENGTH_KEY) || 42;
+    const cursorLineOnly: boolean =
+      vscode.workspace.getConfiguration().get(CONFIG_CURSOR_LINE_ONLY_KEY) ||
+      false;
 
-    console.log({ trimByWords }, typeof trimByWords);
+    if (!cursorLineOnly && isSelectionChange) {
+      // if in a selection change but we dont care about the current cursor, just bail and leave the decorations as is
+      return;
+    }
 
     if (document) {
       const baseHtmlDocument = {
@@ -112,7 +129,10 @@ export function activate(context: vscode.ExtensionContext) {
                 if (
                   stringifiedAttributes &&
                   maxLength > 0 &&
-                  !shouldHideBiscuits
+                  !shouldHideBiscuits &&
+                  (!cursorLineOnly ||
+                    (cursorLineOnly &&
+                      cursorLines.indexOf(endOfLine?.line) > -1))
                 ) {
                   decorations.push({
                     range: new vscode.Range(

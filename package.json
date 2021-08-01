@@ -59,6 +59,11 @@
           "type": "boolean",
           "default": false,
           "description": "You can trim to whole words instead of individual characters."
+        },
+        "html-biscuits.annotationCursorLineOnly": {
+          "type": "boolean",
+          "default": false,
+          "description": "Only show the biscuit on the line that your cursor occupies."
         }
       }
     }

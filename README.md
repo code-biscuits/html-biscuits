@@ -27,7 +27,11 @@ In the current implementation, code-biscuits prevent seeing GitLens annotations.
 
   - default: `0`,
 
-- `html-biscuits.annotationTrimByWords` _boolean_ : Determines whether to trim max length by characters or words..
+- `html-biscuits.annotationTrimByWords` _boolean_ : Determines whether to trim max length by characters or words.
+
+  - default: `false`,
+
+- `html-biscuits.annotationCursorLineOnly` _boolean_ : Determines whether to show the biscuits on all lines or only the current cursor line. (Supports multi cursor editing)
   - default: `false`,
 
 ## Commands
@@ -39,6 +43,18 @@ As we add more commands to change functionality on the fly, we will document the
 You are now able to toggle the biscuits on and off using the VSCode Command `HTML Biscuits: Toggle Biscuits Showing`.
 
 ## Release Notes
+
+### 0.0.15
+
+Add toggle for showing biscuits on the current cursor line only
+
+### 0.0.14
+
+Add command to toggle biscuits off and on.
+
+### 0.0.13
+
+Add max length for biscuit string and add trim by words boolean
 
 ### 0.0.12
 
